@@ -83,20 +83,33 @@ int main(int argc, char* argv[]) {
         string response(buffer);
         cout << "Server response: " << response;
 
-        // אם שלחנו Newgraph, נבדוק קודם אם לא התקבלה שגיאה
         if (command.find("Newgraph") == 0 && response.find("ERROR") == string::npos) {
             int n;
             if (sscanf(command.c_str(), "Newgraph %d", &n) == 1) {
-                for (int i = 1; i <= n; ++i) {
+                int i = 1;
+                while (i <= n) {
                     cout << "Enter point " << i << " (x,y): ";
                     string point;
                     if (!getline(cin, point)) break;
+
                     send(sock, point.c_str(), point.length(), 0);
 
                     memset(buffer, 0, sizeof(buffer));
                     int r = recv(sock, buffer, sizeof(buffer) - 1, 0);
-                    if (r > 0) cout << "Server: " << buffer;
+                    if (r <= 0) {
+                        cout << "Server disconnected.\n";
+                        break;
+                    }
+
+                    string server_response(buffer);
+                    cout << "Server: " << server_response;
+
+                    if (server_response.find("ERROR") == string::npos) {
+                        ++i; 
+                    }
+                  
                 }
+
 
                 memset(buffer, 0, sizeof(buffer));
                 int r = recv(sock, buffer, sizeof(buffer) - 1, 0);
