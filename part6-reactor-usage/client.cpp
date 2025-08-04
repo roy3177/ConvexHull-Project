@@ -6,7 +6,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-#define PORT 9034  // הפורט הקבוע
+#define PORT 9034  
 
 using namespace std;
 
@@ -25,16 +25,16 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // הגדרת כתובת השרת
+    //Defining the server address structure
     sockaddr_in server_addr{};
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);  // תמיד 9034
+    server_addr.sin_port = htons(PORT);  
     if (inet_pton(AF_INET, server_ip, &server_addr.sin_addr) <= 0) {
         cerr << "Invalid IP address\n";
         return 1;
     }
 
-    // התחברות לשרת
+    //Connecting to the server
     if (connect(sock, (sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
         perror("connect");
         return 1;
@@ -44,7 +44,6 @@ int main(int argc, char* argv[]) {
 
    
 
-    // לולאת שליחה/קבלה
     string command;
     char buffer[4096];
 
