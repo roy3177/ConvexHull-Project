@@ -1,6 +1,5 @@
 
 
-#include "Reactor.hpp" // for the Reactor class
 #include <iostream>    // for std::cout, std::cin
 #include <unistd.h>    // for STDIN_FILENO
 #include "Proactor.hpp"

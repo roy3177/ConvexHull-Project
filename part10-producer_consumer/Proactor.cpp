@@ -31,14 +31,12 @@ std::thread startProactor(int sockfd, ProactorFunc func) {
                 int check = recv(sockfd, &temp, 1, MSG_PEEK | MSG_DONTWAIT);
 
                 if (check == 0) {
-                    std::cout << "Client on socket " << sockfd << " closed the connection.\n";
-                    break;
-                } 
-                else if (check < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
-                    std::cerr << "Unexpected recv error on socket " << sockfd << ": " << strerror(errno) << "\n";
+                    std::cout << "Socket " << sockfd << " disconnected.\n";
+                    break; // socket closed
+                } else if (check < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
+                    std::cerr << "Recv error on socket " << sockfd << ": " << strerror(errno) << std::endl;
                     break;
                 }
-
             }
         }
 

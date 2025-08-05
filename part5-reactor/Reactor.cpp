@@ -26,7 +26,7 @@ void Reactor::removeFd(int fd)
     callbacks.erase(fd);
 }
 
-// The start function begins the reactor loop, which will run in a separate thread and handle events
+// The start function begins the reactor loop and handles events in the current thread:
 void Reactor::start()
 {
     running = true;

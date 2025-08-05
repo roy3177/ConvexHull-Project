@@ -16,9 +16,10 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    //Getting the server IP address from command line arguments:
     const char* server_ip = argv[1];
 
-    // יצירת socket TCP
+    //Creating a TCP socket:
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
         perror("socket");
@@ -47,8 +48,8 @@ int main(int argc, char* argv[]) {
     string command;
     char buffer[4096];
 
-
-     memset(buffer, 0, sizeof(buffer));
+    //Receiving the welcome message from the server:
+    memset(buffer, 0, sizeof(buffer));
     int welcome_bytes = recv(sock, buffer, sizeof(buffer) - 1, 0);
     if (welcome_bytes > 0) {
         cout << buffer;
@@ -79,6 +80,7 @@ int main(int argc, char* argv[]) {
             break;
         }
 
+        // Process the server's response:
         string response(buffer);
         cout << "Server response: " << response;
 

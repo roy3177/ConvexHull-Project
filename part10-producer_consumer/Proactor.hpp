@@ -1,21 +1,4 @@
-/*
-@author Roy Maoded
-@author Yarin Keshet
-@date 2025-08-05
 
-In this part, we implemented the Proactor design pattern in C++.
-The Proactor module allows us to handle asynchronous events using threads.
-We defined a startProactor function that starts a new thread.
-The thread uses select() to wait for input readiness on a given socket or file descriptor.
-When input is ready, a user-provided callback function is executed.
-We also implemented stopProactor to cleanly wait for the thread to finish.
-To test the implementation, we created a simple main.cpp that listens to user input from the keyboard (STDIN), 
-and echoes it back.
-When the user types "exit", the program stops gracefully.
-This part sets the foundation for handling multiple clients in the next stages using Proactor logic.
-
-
-*/
 
 #pragma once
 

@@ -111,11 +111,17 @@ int main(int argc, char* argv[]) {
                 }
 
 
-                memset(buffer, 0, sizeof(buffer));
-                int r = recv(sock, buffer, sizeof(buffer) - 1, 0);
-                if (r > 0) {
-                    cout << "Server summary: " << buffer;
+                cout << "Server summary:\n";
+                while (true) {
+                    memset(buffer, 0, sizeof(buffer));
+                    int r = recv(sock, buffer, sizeof(buffer) - 1, 0);
+                    if (r <= 0) break;
+
+                    cout << string(buffer, r);
+
+                    if (r < sizeof(buffer) - 1) break;
                 }
+
             }
         }
 

@@ -1,7 +1,24 @@
+/*
+
+@author Roy Maoded
+@author Yarin Keshet
+@date 2025-08-05
+
+In this part, we implemented a basic Reactor system using C++.
+The reactor listens to multiple file descriptors and triggers a callback function whenever
+an event (like input) occurs.
+We used select() to monitor events.
+When a file descriptor becomes ready (e.g., the user types something), the associated callback is called.
+In main, we registered STDIN with a callback that prints the input.
+Typing "exit" stops the reactor loop.
+This structure is a foundation for building event-driven systems such as servers or async I/O handlers.
+*/
+
+
 #pragma once
 #include <functional>
 #include <unordered_map>
-#include <atomic>
+#include <atomic> 
 
 class Reactor {
 public:

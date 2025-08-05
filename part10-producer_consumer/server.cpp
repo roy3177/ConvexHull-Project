@@ -19,6 +19,9 @@
 #include <unordered_map>
 #include <atomic>
 #include "Proactor.hpp"
+#include <pthread.h>
+#include "area_watcher.hpp"
+
 
 
 
@@ -298,6 +301,13 @@ int main(){
     int listener = setup_server_socket(); // Create the server socket
 
     cout << "Server listening on port " << PORT << "..." << endl;
+
+     //Start the watcher thread to monitor convex hull area changes
+    pthread_t watcher_thread;
+    if (pthread_create(&watcher_thread, nullptr, areaWatcherThread, nullptr) != 0) {
+        cerr << " Failed to create area watcher thread\n";
+        exit(1);
+    }
 
 
     while (true){

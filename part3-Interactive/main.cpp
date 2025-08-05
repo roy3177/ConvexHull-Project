@@ -9,8 +9,7 @@
 using namespace std;
 
 // Helper function to print all points
-void print_points(const vector<pair<float, float>> &pts)
-{
+void print_points(const vector<pair<float, float>> &pts){
     if (pts.empty())
     {
         cout << "No points in the graph.\n";
