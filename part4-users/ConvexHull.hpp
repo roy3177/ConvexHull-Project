@@ -15,8 +15,6 @@ The convex hull area is computed using the CHArea_vec function implemented in pr
 
 #pragma once
 #include <vector>
-#include <deque>
-#include <list>
 #include <utility>
 #include <algorithm>
 #include <cmath>

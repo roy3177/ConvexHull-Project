@@ -21,6 +21,7 @@ float CHArea(const vector<pair<float,float>>& points){
     vector<pair<float,float>> pts=points;
     sort(pts.begin(),pts.end()); //first by x, and after by y
 
+    //Allocate enough space for the convex hull (at most 2n points):
     vector<pair<float,float>>hull(2*n); 
 
     //Iterate over all the sorted points.

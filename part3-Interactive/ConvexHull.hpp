@@ -16,8 +16,6 @@ The program processes these inputs and outputs only the convex hull area when re
 
 #pragma once
 #include <vector>
-#include <deque>
-#include <list>
 #include <utility>
 #include <algorithm>
 #include <cmath>

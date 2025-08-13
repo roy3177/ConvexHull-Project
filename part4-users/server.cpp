@@ -35,6 +35,7 @@ int setup_server_socket()
     hints.ai_socktype = SOCK_STREAM; // TCP
     hints.ai_flags = AI_PASSIVE;     // To get matching address for the local host
 
+    // Get the address info:
     if (getaddrinfo(NULL, PORT, &hints, &res) != 0)
     {
         perror("getaddrinfo");
@@ -290,7 +291,7 @@ int main()
 
                         cout << "New connection on socket " << newfd << endl;
 
-                        // 🟢 Send welcome message to the client:
+                        //Send welcome message to the client:
                         string welcome =
                             "Welcome to the Convex Hull Server!\n"
                             "Available commands:\n"
@@ -334,7 +335,7 @@ int main()
                     }
                     else
                     {
-                        buf[nbytes] = '\0'; // נוודא שהמחרוזת מסתיימת ב־'\0' לצורך הדפסה
+                        buf[nbytes] = '\0'; // Ensure the string is null-terminated for printing
                         string response = process_command(string(buf), i, master_fds);
 
                         cout << "[Server] Received command: " << buf << endl;
