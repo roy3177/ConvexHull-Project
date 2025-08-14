@@ -12,8 +12,8 @@ int main(){
     cin >> n;
     cin.ignore() ; //Read and ignore '/n' after the number
 
-    if (n <= 0) {
-        cerr << "Error: Number of points must be positive." << endl;
+    if (n < 3) {
+        cerr << "Error: At least 3 points are required to form a convex hull." << endl;
         return 1;
     }
 
@@ -22,14 +22,24 @@ int main(){
         float x;
         float y;
         char comma;
-
-        cout << "Point " << i + 1 << ": ";
-        if (!(cin >> x >> comma >> y) || comma != ',') {
-            cerr << "Error: Invalid input format. Expected format x,y (e.g. 0,1)." << endl;
-            return 1;
-        }        
+        bool unique = false;
+        while (!unique) {
+            cout << "Point " << i + 1 << ": ";
+            if (!(cin >> x >> comma >> y) || comma != ',') {
+                cerr << "Error: Invalid input format. Expected format x,y (e.g. 0,1)." << endl;
+                return 1;
+            }
+            // Check for duplicate
+            unique = true;
+            for (const auto& pt : points) {
+                if (pt.first == x && pt.second == y) {
+                    cerr << "Error: Point already entered. Please enter a unique point." << endl;
+                    unique = false;
+                    break;
+                }
+            }
+        }
         points.emplace_back(x,y); //Adding it to the vector of the points
-
     }
 
    

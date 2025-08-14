@@ -22,7 +22,7 @@ If any area exceeds 100.0, a warning message is printed to the server console.
 
 float CHArea_vec(const std::vector<std::pair<float, float>>& points);
 
-// 🔒 Shared area state and synchronization tools (used by CHArea_vec and area_watcher thread):
+// Shared area state and synchronization tools (used by CHArea_vec and area_watcher thread):
 extern double curr_area;
 extern double last_report_area;
 extern const double AREA_THRESHOLD;

@@ -50,6 +50,6 @@ float CHArea(const vector<pair<float,float>>& points){
         area=area+(p1.first*p2.second-p2.first*p1.second);
     }
 
-    //Returnn the absolute value of the area divide 2==>the geometric formula for polygon's area:
+    //Return the absolute value of the area divide 2==>the geometric formula for polygon's area:
     return fabs(area)/2.0 ; 
 }

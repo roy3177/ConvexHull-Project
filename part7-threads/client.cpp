@@ -119,7 +119,7 @@ int main(int argc, char* argv[]) {
 
                     cout << string(buffer, r);
 
-                    if (r < sizeof(buffer) - 1) break;
+                    if (r < static_cast<int>(sizeof(buffer) - 1)) break;
                 }
 
             }

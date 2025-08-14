@@ -63,7 +63,7 @@ float CHArea_vec(const vector<pair<float,float>>& points)
 
    area = fabs(area)/2.0;
 
-    // 🔒 Synchronization: safely update curr_area and notify watcher if changed
+    // Synchronization: safely update curr_area and notify watcher if changed
     pthread_mutex_lock(&ch_mutex);
     curr_area = area;
 

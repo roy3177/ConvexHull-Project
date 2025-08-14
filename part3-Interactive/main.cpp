@@ -62,17 +62,28 @@ int main()
             int added = 0;
             while (added < n)
             {
-                cout << "Point " << (added + 1) << ": ";
-                string point_line;
-                if (!getline(cin, point_line))
-                    break;
                 float x, y;
                 char comma;
-                istringstream point_stream(point_line);
-                if (!(point_stream >> x >> comma >> y) || comma != ',')
-                {
-                    cerr << "Invalid point format. Please enter as: x,y (e.g., 1.5,2.5)\n";
-                    continue;
+                bool unique = false;
+                while (!unique) {
+                    cout << "Point " << (added + 1) << ": ";
+                    string point_line;
+                    if (!getline(cin, point_line))
+                        break;
+                    istringstream point_stream(point_line);
+                    if (!(point_stream >> x >> comma >> y) || comma != ',')
+                    {
+                        cerr << "Invalid point format. Please enter as: x,y (e.g., 1.5,2.5)\n";
+                        continue;
+                    }
+                    unique = true;
+                    for (const auto& pt : points) {
+                        if (pt.first == x && pt.second == y) {
+                            cerr << "Error: Point already entered. Please enter a unique point." << endl;
+                            unique = false;
+                            break;
+                        }
+                    }
                 }
                 points.emplace_back(x, y);
                 ++added;

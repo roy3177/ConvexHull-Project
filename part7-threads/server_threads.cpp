@@ -26,7 +26,7 @@ using namespace std;
 #define BACKLOG 10  // The number of pending connections that the queue will hold
 
 // Global vector to hold points for all clients:
-unordered_map<int, vector<pair<float, float>>> client_points;
+vector<pair<float, float>> points;
 
 atomic<int> thread_counter(1); //Counter for the number of threads via order
 
@@ -106,22 +106,18 @@ string process_command(const string &cmd, int client_fd){
 
     if (keyword == "Newgraph")
     {
-
-        if (!client_points[client_fd].empty())
+        if (!points.empty())
         {
-            return "ERROR: A graph already exists. Remove all points first to create a new one.\n";
+            return "ERROR: A graph already exists. You cannot create a new graph.\n";
         }
-
         int n;
         if (!(ss >> n) || n < 3)
         {
             return "ERROR: Invalid Newgraph format. Must be at least 3 points\n";
         }
-
-        client_points[client_fd].clear();
+        points.clear();
         string confirmation = "OK: send " + to_string(n) + " points, one per line in format x,y\n";
         send(client_fd, confirmation.c_str(), confirmation.size(), 0);
-
         int i = 0;
         while (i < n)
         {
@@ -132,7 +128,6 @@ string process_command(const string &cmd, int client_fd){
             {
                 return "ERROR: Failed to receive point " + to_string(i + 1) + "\n";
             }
-
             float x, y;
             char comma;
             stringstream ps(point_buf);
@@ -143,25 +138,22 @@ string process_command(const string &cmd, int client_fd){
                 send(client_fd, err.c_str(), err.size(), 0);
                 continue;
             }
-
             pair<float, float> new_point = {x, y};
-            if (std::find(client_points[client_fd].begin(), client_points[client_fd].end(), new_point) != client_points[client_fd].end())
+            if (std::find(points.begin(), points.end(), new_point) != points.end())
             {
                 string err = "ERROR: Duplicate point detected at point " + to_string(i + 1) + "\n";
                 send(client_fd, err.c_str(), err.size(), 0);
                 continue;
             }
-
-            client_points[client_fd].push_back(new_point);
+            points.push_back(new_point);
             string ack = "Server: Point " + to_string(i + 1) + " received\n";
             send(client_fd, ack.c_str(), ack.size(), 0);
             ++i;
         }
-
         ostringstream oss;
         oss << fixed << setprecision(2);
-        oss << "Graph initialized with " << client_points[client_fd].size() << " points:\n";
-        for (const auto &p : client_points[client_fd])
+        oss << "Graph initialized with " << points.size() << " points:\n";
+        for (const auto &p : points)
         {
             oss << "(" << p.first << "," << p.second << ")\n";
         }
@@ -177,16 +169,15 @@ string process_command(const string &cmd, int client_fd){
             return "ERROR: Usage: Newpoint x,y\n";
         }
         pair<float, float> new_point = {x, y};
-        if (std::find(client_points[client_fd].begin(), client_points[client_fd].end(), new_point) != client_points[client_fd].end())
+        if (std::find(points.begin(), points.end(), new_point) != points.end())
         {
             return "ERROR: Point already exists\n";
         }
-        client_points[client_fd].push_back(new_point);
-
+        points.push_back(new_point);
         ostringstream oss;
         oss << "Point added\n";
         oss << fixed << setprecision(2);
-        for (const auto &p : client_points[client_fd])
+        for (const auto &p : points)
         {
             oss << "(" << p.first << "," << p.second << ")\n";
         }
@@ -201,15 +192,14 @@ string process_command(const string &cmd, int client_fd){
         {
             return "ERROR: Usage: Removepoint x,y\n";
         }
-
-        auto it = std::find(client_points[client_fd].begin(), client_points[client_fd].end(), make_pair(x, y));
-        if (it != client_points[client_fd].end())
+        auto it = std::find(points.begin(), points.end(), make_pair(x, y));
+        if (it != points.end())
         {
-            client_points[client_fd].erase(it);
+            points.erase(it);
             ostringstream oss;
             oss << "Point removed\n";
             oss << fixed << setprecision(2);
-            for (const auto &p : client_points[client_fd])
+            for (const auto &p : points)
             {
                 oss << "(" << p.first << "," << p.second << ")\n";
             }
@@ -223,9 +213,9 @@ string process_command(const string &cmd, int client_fd){
 
     else if (keyword == "CH")
     {
-        if (client_points[client_fd].size() < 3)
+        if (points.size() < 3)
             return "0\n";
-        float area = CHArea_vec(client_points[client_fd]);
+        float area = CHArea_vec(points);
         std::ostringstream oss;
         oss << std::fixed << std::setprecision(2) << area;
         return "Area: " + oss.str() + "\n";
@@ -307,10 +297,6 @@ void handle_client(int client_fd, int thread_number){
 
         if (should_exit) {
             close(client_fd);
-            {
-                lock_guard<mutex> lock(points_mutex);
-                client_points.erase(client_fd);
-            }
             break;
         }
     }

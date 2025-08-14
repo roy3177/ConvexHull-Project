@@ -25,7 +25,7 @@ std::thread startProactor(int sockfd, ProactorFunc func) {
                 // Handle the socket when data is ready
                 func(sockfd);
 
-                // 🔒 Check if the socket was closed (from client or inside func)
+                // Check if the socket was closed (from client or inside func)
                 // recv with MSG_PEEK checks without removing data from buffer
                 char temp;
                 int check = recv(sockfd, &temp, 1, MSG_PEEK | MSG_DONTWAIT);
