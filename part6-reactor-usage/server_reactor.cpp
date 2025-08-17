@@ -148,7 +148,8 @@ void handleClient(int client_fd) {
         }
     }
 
-    else if (keyword == "Newpoint") {
+    else if (keyword == "Newpoint") 
+    {
         float x, y;
         char comma;
         if (!(ss >> x >> comma >> y) || comma != ',') {

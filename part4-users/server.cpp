@@ -172,17 +172,26 @@ string process_command(const string &cmd, int client_fd, fd_set &master_fds)
     {
         float x, y;
         char comma;
-        if (!(ss >> x >> comma >> y) || comma != ',')
-        {
-            return "ERROR: Usage: Newpoint x,y\n";
+        bool valid = false;
+        while (!valid) {
+            if (!(ss >> x >> comma >> y) || comma != ',') {
+                return "ERROR: Usage: Newpoint x,y\n";
+            }
+            // Check for duplicate
+            bool duplicate = false;
+            for (const auto& pt : points) {
+                if (pt.first == x && pt.second == y) {
+                    duplicate = true;
+                    break;
+                }
+            }
+            if (!duplicate) {
+                valid = true;
+            } else {
+                return "ERROR: Point already exists\n";
+            }
         }
-        pair<float, float> new_point = {x, y};
-        if (std::find(points.begin(), points.end(), new_point) != points.end())
-        {
-            return "ERROR: Point already exists\n";
-        }
-        points.push_back(new_point);
-
+        points.push_back({x, y});
         ostringstream oss;
         oss << "Point added\n";
         oss << fixed << setprecision(2);

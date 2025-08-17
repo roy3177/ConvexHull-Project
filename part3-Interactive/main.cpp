@@ -96,21 +96,47 @@ int main()
         {
             float x, y;
             char comma;
-            while (!(iss >> x >> comma >> y) || comma != ',')
-            {
-                cerr << "Invalid point format. Please enter as: Newpoint x,y (e.g., Newpoint 1.5,2.5)\n";
-                cout << "Try again: ";
-                string retry_line;
-                if (!getline(cin, retry_line))
-                    break;
-                istringstream retry_iss(retry_line);
-                string retry_command;
-                retry_iss >> retry_command; // skip command
-                iss = move(retry_iss);
+            bool valid = false;
+            while (!valid) {
+                if (!(iss >> x >> comma >> y) || comma != ',') {
+                    cerr << "Invalid point format. Please enter as: Newpoint x,y (e.g., Newpoint 1.5,2.5)\n";
+                    cout << "Try again: ";
+                    string retry_line;
+                    if (!getline(cin, retry_line))
+                        break;
+                    istringstream retry_iss(retry_line);
+                    string retry_command;
+                    retry_iss >> retry_command; // skip command
+                    iss = move(retry_iss);
+                    continue;
+                }
+                // Check for duplicate
+                bool duplicate = false;
+                for (const auto& pt : points) {
+                    if (pt.first == x && pt.second == y) {
+                        cerr << "Error: Point already exists. Please enter a unique point." << endl;
+                        duplicate = true;
+                        break;
+                    }
+                }
+                if (!duplicate) {
+                    valid = true;
+                } else {
+                    cout << "Try again: ";
+                    string retry_line;
+                    if (!getline(cin, retry_line))
+                        break;
+                    istringstream retry_iss(retry_line);
+                    string retry_command;
+                    retry_iss >> retry_command; // skip command
+                    iss = move(retry_iss);
+                }
             }
-            points.emplace_back(x, y);
-            cout << "Point (" << x << "," << y << ") added.\n";
-            print_points(points);
+            if (valid) {
+                points.emplace_back(x, y);
+                cout << "Point (" << x << "," << y << ") added.\n";
+                print_points(points);
+            }
         }
 
         else if (command == "CH")
