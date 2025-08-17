@@ -31,7 +31,7 @@ using namespace std;
 #define BACKLOG 10  // The number of pending connections that the queue will hold
 
 // Global vector to hold points for all clients:
-unordered_map<int, vector<pair<float, float>>> client_points;
+vector<pair<float, float>> shared_graph;
 
 atomic<int> thread_counter(1); //Counter for the number of threads via order
 
@@ -112,7 +112,7 @@ string process_command(const string &cmd, int client_fd){
     if (keyword == "Newgraph")
     {
 
-        if (!client_points[client_fd].empty())
+        if (!shared_graph.empty())
         {
             return "ERROR: A graph already exists. Remove all points first to create a new one.\n";
         }
@@ -123,7 +123,7 @@ string process_command(const string &cmd, int client_fd){
             return "ERROR: Invalid Newgraph format. Must be at least 3 points\n";
         }
 
-        client_points[client_fd].clear();
+        shared_graph.clear();
         string confirmation = "OK: send " + to_string(n) + " points, one per line in format x,y\n";
         send(client_fd, confirmation.c_str(), confirmation.size(), 0);
 
@@ -150,14 +150,14 @@ string process_command(const string &cmd, int client_fd){
             }
 
             pair<float, float> new_point = {x, y};
-            if (std::find(client_points[client_fd].begin(), client_points[client_fd].end(), new_point) != client_points[client_fd].end())
+            if (std::find(shared_graph.begin(), shared_graph.end(), new_point) != shared_graph.end())
             {
                 string err = "ERROR: Duplicate point detected at point " + to_string(i + 1) + "\n";
                 send(client_fd, err.c_str(), err.size(), 0);
                 continue;
             }
 
-            client_points[client_fd].push_back(new_point);
+            shared_graph.push_back(new_point);
             string ack = "Server: Point " + to_string(i + 1) + " received\n";
             send(client_fd, ack.c_str(), ack.size(), 0);
             ++i;
@@ -165,8 +165,8 @@ string process_command(const string &cmd, int client_fd){
 
         ostringstream oss;
         oss << fixed << setprecision(2);
-        oss << "Graph initialized with " << client_points[client_fd].size() << " points:\n";
-        for (const auto &p : client_points[client_fd])
+        oss << "Graph initialized with " << shared_graph.size() << " points:\n";
+        for (const auto &p : shared_graph)
         {
             oss << "(" << p.first << "," << p.second << ")\n";
         }
@@ -182,16 +182,16 @@ string process_command(const string &cmd, int client_fd){
             return "ERROR: Usage: Newpoint x,y\n";
         }
         pair<float, float> new_point = {x, y};
-        if (std::find(client_points[client_fd].begin(), client_points[client_fd].end(), new_point) != client_points[client_fd].end())
+        if (std::find(shared_graph.begin(), shared_graph.end(), new_point) != shared_graph.end())
         {
             return "ERROR: Point already exists\n";
         }
-        client_points[client_fd].push_back(new_point);
+        shared_graph.push_back(new_point);
 
         ostringstream oss;
         oss << "Point added\n";
         oss << fixed << setprecision(2);
-        for (const auto &p : client_points[client_fd])
+        for (const auto &p : shared_graph)
         {
             oss << "(" << p.first << "," << p.second << ")\n";
         }
@@ -207,14 +207,14 @@ string process_command(const string &cmd, int client_fd){
             return "ERROR: Usage: Removepoint x,y\n";
         }
 
-        auto it = std::find(client_points[client_fd].begin(), client_points[client_fd].end(), make_pair(x, y));
-        if (it != client_points[client_fd].end())
+        auto it = std::find(shared_graph.begin(), shared_graph.end(), make_pair(x, y));
+        if (it != shared_graph.end())
         {
-            client_points[client_fd].erase(it);
+            shared_graph.erase(it);
             ostringstream oss;
             oss << "Point removed\n";
             oss << fixed << setprecision(2);
-            for (const auto &p : client_points[client_fd])
+            for (const auto &p : shared_graph)
             {
                 oss << "(" << p.first << "," << p.second << ")\n";
             }
@@ -228,9 +228,9 @@ string process_command(const string &cmd, int client_fd){
 
     else if (keyword == "CH")
     {
-        if (client_points[client_fd].size() < 3)
+        if (shared_graph.size() < 3)
             return "0\n";
-        float area = CHArea_vec(client_points[client_fd]);
+        float area = CHArea_vec(shared_graph);
         std::ostringstream oss;
         oss << std::fixed << std::setprecision(2) << area;
         return "Area: " + oss.str() + "\n";
@@ -272,7 +272,7 @@ void handle_client_event(int client_fd) {
 
         close(client_fd);
         lock_guard<mutex> lock(points_mutex);
-        client_points.erase(client_fd);
+
         return;
     }
 
@@ -291,7 +291,6 @@ void handle_client_event(int client_fd) {
     if (cmd_str.find("exit") != string::npos) {
         close(client_fd);
         lock_guard<mutex> lock(points_mutex);
-        client_points.erase(client_fd);
     }
 }
 

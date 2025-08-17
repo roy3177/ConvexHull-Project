@@ -20,7 +20,8 @@ This structure is a foundation for building event-driven systems such as servers
 #include <unordered_map>
 #include <atomic> 
 
-class Reactor {
+class Reactor 
+{
 public:
 
     /*

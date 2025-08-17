@@ -4,11 +4,13 @@
 using namespace std;
 
 //Computes the cross product of three points A, B, C:
-static float cross(const pair<float,float>& A, const pair<float,float>& B,const pair<float,float>& C){
+static float cross(const pair<float,float>& A, const pair<float,float>& B,const pair<float,float>& C)
+{
     return (A.first-C.first)*(B.second-C.second)-(A.second-C.second)*(B.first-C.first);
 }
 
-float CHArea_deque(const vector<pair<float,float>>& points){
+float CHArea_deque(const vector<pair<float,float>>& points)
+{
     int n=points.size();
     
     //Need at least three points:

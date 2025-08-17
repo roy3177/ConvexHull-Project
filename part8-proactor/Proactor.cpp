@@ -38,6 +38,6 @@ std::thread startProactor(int sockfd, ProactorFunc func ){
 //Stop the thread by joining it:
 void stopProactor(std::thread& t){
     if(t.joinable()){
-        t.join(); //Wait for the threaf to finish.
+        t.join(); //Wait for the thread to finish.
     }
 }

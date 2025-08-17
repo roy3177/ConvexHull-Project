@@ -81,6 +81,7 @@ string process_command(const string &cmd, int client_fd, fd_set &master_fds)
 {
 
     string clean_cmd = cmd;
+    // remove all newline ('\n') and carriage return ('\r') characters from the string clean_cmd.
     clean_cmd.erase(remove(clean_cmd.begin(), clean_cmd.end(), '\n'), clean_cmd.end());
     clean_cmd.erase(remove(clean_cmd.begin(), clean_cmd.end(), '\r'), clean_cmd.end());
 
@@ -109,6 +110,8 @@ string process_command(const string &cmd, int client_fd, fd_set &master_fds)
         }
 
         int n;
+        // (ss >> n) -> uses a stringstream (ss) to extract an integer value
+        // from the command string and store it in the variable n.
         if (!(ss >> n) || n < 3)
         {
             return "ERROR: Invalid Newgraph format. Must be at least 3 points\n";
@@ -132,7 +135,8 @@ string process_command(const string &cmd, int client_fd, fd_set &master_fds)
             float x, y;
             char comma;
             stringstream ps(point_buf);
-            char extra;
+            char extra;//if something was entered after y in the x,y format
+            // !(ps >> x >> comma >> y) -> check to see if the input string can be successfully parsed into three values
             if (!(ps >> x >> comma >> y) || comma != ',' || ps >> extra)
             {
                 string err = "ERROR: Invalid format at point " + to_string(i + 1) + " (expected x,y)\n";
@@ -246,6 +250,7 @@ int main()
 
     cout << "Server listening on port " << PORT << "..." << endl;
 
+    // Uses select to wait for activity on any socket (new connection or client message).
     while (true)
     {
         read_fds = master_fds; // Copy the master set to read_fds for select

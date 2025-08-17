@@ -136,8 +136,9 @@ int main()
                 iss = move(retry_iss);
             }
 
+            //searches through an iterator for the point made with make_pair(x,y)
             auto it = find(points.begin(), points.end(), make_pair(x, y));
-            if (it != points.end())
+            if (it != points.end()) // if the point is found
             {
                 points.erase(it);
                 cout << "Point (" << x << "," << y << ") removed.\n";

@@ -6,12 +6,14 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-#define PORT 9034 
+#define PORT 9034 // Beej's port
 
 using namespace std;
 
-int main(int argc, char* argv[]) {
-    if (argc != 2) {
+int main(int argc, char* argv[]) 
+{
+    if (argc != 2) 
+    {
         cerr << "Usage: " << argv[0] << " <server_ip>\n";
         return 1;
     }
@@ -28,8 +30,9 @@ int main(int argc, char* argv[]) {
     //Defining the server address structure:
     sockaddr_in server_addr{};
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);  // תמיד 9034
-    if (inet_pton(AF_INET, server_ip, &server_addr.sin_addr) <= 0) {
+    server_addr.sin_port = htons(PORT);  // always 9034
+    if (inet_pton(AF_INET, server_ip, &server_addr.sin_addr) <= 0) 
+    {
         cerr << "Invalid IP address\n";
         return 1;
     }
@@ -82,10 +85,12 @@ int main(int argc, char* argv[]) {
 
         string response(buffer);
         cout << "Server response: " << response;
-
-        if (command.find("Newgraph") == 0 && response.find("ERROR") == string::npos) {
+        // *string::npos -> not found
+        if (command.find("Newgraph") == 0 && response.find("ERROR") == string::npos) 
+        {
             int n;
-            if (sscanf(command.c_str(), "Newgraph %d", &n) == 1) {
+            if (sscanf(command.c_str(), "Newgraph %d", &n) == 1) 
+            {
                 int i = 1;
                 while (i <= n) {
                     cout << "Enter point " << i << " (x,y): ";
