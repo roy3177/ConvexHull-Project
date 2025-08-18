@@ -67,7 +67,8 @@ float CHArea_vec(const vector<pair<float,float>>& points)
     pthread_mutex_lock(&ch_mutex);
     curr_area = area;
 
-    if (fabs(curr_area - last_report_area) >= 1e-3) {
+    if (fabs(curr_area - last_report_area) >= 1e-3) 
+    {
         last_report_area = curr_area;
         pthread_cond_signal(&area_changed_cond); // Notify the waiting thread
     }

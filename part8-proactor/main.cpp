@@ -6,13 +6,17 @@
 #include  <cstring>
 
 // Function that will be called by the Proactor when there's input:
-void handleInput(int fd){
-
+void handleInput(int fd)
+{
+    (void)fd; // Mark fd as intentionally unused
+    //reading input directly from std::cin, not using the file descriptor to read data
+    
     std::string input;
     std::getline(std::cin, input);
     std::cout << "Received input: " << input << std::endl;
 
-    if (input == "exit"){
+    if (input == "exit")
+    {
         std::cout << "Stopping proactor..." << std::endl;
         exit(0); //Ends the process, the proactor thread will close as well
     }

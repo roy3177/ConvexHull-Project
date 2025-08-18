@@ -11,7 +11,7 @@
 #include <sstream>
 #include <iomanip>         // std::setprecision
 
-Reactor reactor;
+Reactor reactor; // Reactor object initialization.
 std::vector<std::pair<float, float>> shared_graph; // The common Graph of clients.
 
 /**
@@ -24,7 +24,8 @@ to the client.
 * 
 */
 
-void handleClient(int client_fd) {
+void handleClient(int client_fd) 
+{
 
     char buf[1024]; // Buffer to hold incoming data that is received from the client.
     memset(buf, 0, sizeof(buf));
@@ -275,13 +276,15 @@ int main() {
     std::cout << "Server is listening on port 9034...\n";
 
     // Add the server socket to the reactor:
-    // The reactor will call the handleClient function when a new client connects:
+    // The reactor will call the handleClient function when a new client connects
     //This is a lambda function that will be called when a new client connects:
-    reactor.addFd(server_fd, [&](int fd) {
+    reactor.addFd(server_fd, [&](int fd) 
+    {
         sockaddr_in client_addr{};
         socklen_t client_len = sizeof(client_addr);
         int client_fd = accept(fd, (sockaddr*)&client_addr, &client_len);
-        if (client_fd == -1) {
+        if (client_fd == -1) 
+        {
             perror("accept");
             return;
         }
@@ -304,7 +307,7 @@ int main() {
         reactor.addFd(client_fd, handleClient); // Add the client socket to the reactor
     });
 
-    // Start the reactor loop in a separate thread:
+    // Start the reactor event loop:
     reactor.start();
 
     return 0;

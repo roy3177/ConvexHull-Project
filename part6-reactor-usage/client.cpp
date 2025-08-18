@@ -73,7 +73,8 @@ int main(int argc, char* argv[]) {
 
         send(sock, command.c_str(), command.length(), 0);
 
-        memset(buffer, 0, sizeof(buffer));
+        memset(buffer, 0, sizeof(buffer)); // This sets every byte in buffer to zero, effectively clearing it.
+        //This way, after receiving new data, the buffer contains only the fresh message from the server, and any unused bytes remain zero
         int bytes = recv(sock, buffer, sizeof(buffer) - 1, 0);
         if (bytes <= 0) {
             cout << "Server disconnected.\n";

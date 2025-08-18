@@ -50,6 +50,7 @@ void Reactor::loop()
         int max_fd = -1;
 
         // Iterate over all fds being tracked
+        // _ ignore the callback value
         for (const auto &[fd, _] : callbacks)
         {
             FD_SET(fd, &readfds); // Builds the set of file descriptors to monitor(not from scratch)
@@ -80,7 +81,7 @@ void Reactor::loop()
 
         for (const auto &[fd, cb] : callbacks)
         {
-            // Check if the file descriptor is ready for reading
+            // Check if the file descriptor is ready for reading or writing
             // If it returns true, it means there is data to read or an event occurred
             if (FD_ISSET(fd, &readfds))
             {

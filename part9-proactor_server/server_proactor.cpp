@@ -30,6 +30,9 @@ using namespace std;
 // Global vector to hold points for all clients (shared graph):
 vector<pair<float, float>> shared_graph;
 
+//ensures that operations like incrementing, decrementing,
+// or reading the value are done atomically
+//—meaning they can't be interrupted by another thread, so you avoid race conditions.
 atomic<int> thread_counter(1); //Counter for the number of threads via order
 
 // Function for listening for new connections:
@@ -241,10 +244,9 @@ string process_command(const string &cmd, int client_fd){
 
 mutex points_mutex;
 
-void handle_client_event(int client_fd) {
+void handle_client_event(int client_fd) 
+{
     static thread_local int thread_number = thread_counter++;
-
-
 
     char buffer[1024];
     memset(buffer, 0, sizeof(buffer));
@@ -288,7 +290,7 @@ int main(){
 
     while (true){
 
-        int thread_number=thread_counter++;
+        
         
         sockaddr_storage client_addr; // Structure to hold client address
         socklen_t addrlen=sizeof client_addr;
@@ -313,7 +315,8 @@ int main(){
 
         
         thread t = startProactor(new_fd, handle_client_event);
-        t.detach();
+        t.detach();// the thread will execute in the background,
+        // so the main server loop can keep accepting new clients.
 
     }
     return 0;

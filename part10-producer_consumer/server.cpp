@@ -230,7 +230,7 @@ string process_command(const string &cmd, int client_fd){
     {
         if (shared_graph.size() < 3)
             return "0\n";
-        float area = CHArea_vec(shared_graph);
+        float area = CHArea_vec(shared_graph); // also send the cond signal through CHArea_vec
         std::ostringstream oss;
         oss << std::fixed << std::setprecision(2) << area;
         return "Area: " + oss.str() + "\n";
@@ -303,15 +303,14 @@ int main(){
 
      //Start the watcher thread to monitor convex hull area changes
     pthread_t watcher_thread;
-    if (pthread_create(&watcher_thread, nullptr, areaWatcherThread, nullptr) != 0) {
+    if (pthread_create(&watcher_thread, nullptr, areaWatcherThread, nullptr) != 0) 
+    {
         cerr << " Failed to create area watcher thread\n";
         exit(1);
     }
 
 
     while (true){
-
-        int thread_number=thread_counter++;
         
         sockaddr_storage client_addr; // Structure to hold client address
         socklen_t addrlen=sizeof client_addr;

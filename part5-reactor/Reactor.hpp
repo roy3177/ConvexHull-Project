@@ -48,6 +48,7 @@ private:
     std::unordered_map<int, Callback> callbacks;
 
     // A thread that will run the reactor loop:
+    // atomic is used for thread-safe interaction
     std::atomic<bool> running;
 
     // The reactor loop function that will be run in a separate thread:
